@@ -51,6 +51,7 @@ public class Todo {
                 '}';
     }
     public static void createTodo() {
+        todos = TodoAdd.readData();
         System.out.println("Title: ");
         String title = scanner.nextLine();
         System.out.println("Until: ");
@@ -58,10 +59,12 @@ public class Todo {
         LocalDate untilDate = LocalDate.parse(until);
         Todo todo = new Todo(title, untilDate);
         todos.add(todo);
+        TodoAdd.writeData(todos);
         System.out.println("Saved!!!");
     }
 
     public static void editTodo() {
+        todos = TodoAdd.readData();
         System.out.println("Edit TODO number: ");
         int num = scanner.nextInt();
         scanner.nextLine();
@@ -80,11 +83,14 @@ public class Todo {
         if(!until.isEmpty()){
             todo.until = LocalDate.parse(until);
         }
+        todos.add(todo);
+        TodoAdd.writeData(todos);
         System.out.println("Saved!!!");
 
     }
 
     public static void finishTodo() {
+        todos = TodoAdd.readData();
         System.out.println("Finish TODO number: ");
         int num = scanner.nextInt();
         scanner.nextLine();
@@ -94,10 +100,13 @@ public class Todo {
         }
         Todo todo = todos.get(num - 1);
         todo.done = true;
+        todos.add(todo);
+        TodoAdd.writeData(todos);
         System.out.println("Done!!!");
     }
 
     public static void deleteTodo() {
+        todos = TodoAdd.readData();
         System.out.println("Delete TODO number: ");
         int num = scanner.nextInt();
         scanner.nextLine();
@@ -106,6 +115,7 @@ public class Todo {
             return;
         }
         todos.remove(num - 1);
+        TodoAdd.writeData(todos);
         System.out.println("Deleted!!!");
     }
 }
