@@ -1,21 +1,36 @@
 package another;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDateTime;
 
 public class Todo {
-    String title;
-    LocalDate until;
-    boolean done;
-    static Scanner scanner = new Scanner(System.in);
-    static List<Todo> todos = new ArrayList<>();
+    private String title;
+    private LocalDate dueDate;
+    private boolean done;
 
-    public Todo(String title, LocalDate until) {
+    public Todo(String title, LocalDate dueDate) {
+        this(title,dueDate,false);
+    }
+    public Todo(String title, LocalDate dueDate, boolean done) {
         this.title = title;
-        this.until = until;
+        this.dueDate = dueDate;
         this.done = done;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void done() {
+        this.done = true;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     public String getTitle() {
@@ -26,96 +41,15 @@ public class Todo {
         this.title = title;
     }
 
-    public LocalDate getUntil() {
-        return until;
-    }
-
-    public void setUntil(LocalDate until) {
-        this.until = until;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
-        this.done = done;
-    }
-
     @Override
     public String toString() {
         return "Todo{" +
                 "title='" + title + '\'' +
-                ", until=" + until +
-                ", done=" + done +
+                ", dueDate=" + dueDate +
+                ", until=" + done +
                 '}';
     }
-    public static void createTodo() {
-        todos = TodoAdd.readData();
-        System.out.println("Title: ");
-        String title = scanner.nextLine();
-        System.out.println("Until: ");
-        String until = scanner.nextLine();
-        LocalDate untilDate = LocalDate.parse(until);
-        Todo todo = new Todo(title, untilDate);
-        todos.add(todo);
-        TodoAdd.writeData(todos);
-        System.out.println("Saved!!!");
-    }
-
-    public static void editTodo() {
-        todos = TodoAdd.readData();
-        System.out.println("Edit TODO number: ");
-        int num = scanner.nextInt();
-        scanner.nextLine();
-        if (num < 1 || num > todos.size()) {
-            System.out.println("Invalid TODO number!");
-            return;
-        }
-        Todo todo = todos.get(num - 1);
-        System.out.println("Title: ");
-        String title = scanner.nextLine();
-        if(!title.isEmpty()){
-            todo.title = title;
-        }
-        System.out.println("Until: ");
-        String until = scanner.nextLine();
-        if(!until.isEmpty()){
-            todo.until = LocalDate.parse(until);
-        }
-        todos.add(todo);
-        TodoAdd.writeData(todos);
-        System.out.println("Saved!!!");
-
-    }
-
-    public static void finishTodo() {
-        todos = TodoAdd.readData();
-        System.out.println("Finish TODO number: ");
-        int num = scanner.nextInt();
-        scanner.nextLine();
-        if (num < 1 || num > todos.size()) {
-            System.out.println("Invalid TODO number!");
-            return;
-        }
-        Todo todo = todos.get(num - 1);
-        todo.done = true;
-        todos.add(todo);
-        TodoAdd.writeData(todos);
-        System.out.println("Done!!!");
-    }
-
-    public static void deleteTodo() {
-        todos = TodoAdd.readData();
-        System.out.println("Delete TODO number: ");
-        int num = scanner.nextInt();
-        scanner.nextLine();
-        if (num < 1 || num > todos.size()) {
-            System.out.println("Invalid TODO number!");
-            return;
-        }
-        todos.remove(num - 1);
-        TodoAdd.writeData(todos);
-        System.out.println("Deleted!!!");
+    public String toCSV(){
+        return String.format("%s, %s, %s, %s", title, dueDate, done);
     }
 }

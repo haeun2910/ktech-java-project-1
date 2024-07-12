@@ -1,76 +1,58 @@
 package another;
 
-import java.io.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
-import static another.Todo.*;
-import static another.TodoAdd.readData;
-
 public class Main {
+    private static List<Todo> todos;
     public static void main(String[] args) throws IOException {
-        List<Todo> todos = TodoAdd.readData();
-        System.out.println(todos.size());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        TodoReadAndWrite readAndWrite = new TodoReadAndWrite();
+        todos = readAndWrite.getTodos();
+        TodoAdd add = new TodoAdd(bufferedReader, readAndWrite.getTodos());
         while (true){
-            System.out.println("Welcome!!!");
-            System.out.println("1. Create TODO");
-            System.out.println("2. Edit TODO");
-            System.out.println("3. Finish TODO");
-            System.out.println("4. Delete TODO");
-            System.out.println("5. Exit");
-            System.out.print("Input: ");
-            int remaining = 0;
-
-            int choice = Integer.parseInt(reader.readLine());
-            switch(choice) {
+            printFirstScreen();
+            System.out.println("Input: ");
+            int choice;
+            try{
+                choice = Integer.parseInt(bufferedReader.readLine());
+            }catch (NumberFormatException e){
+                System.out.println("Please enter a valid number.");
+                continue;
+            }
+            if(choice == 5){
+                break;
+            }
+            switch (choice) {
                 case 1:
-                    createTodo();
-                    break;
+                    add.createTodo();
                 case 2:
-                    editTodo();
-                    break;
+                    add.editTodo();
                 case 3:
-                    finishTodo();
-                    break;
+                    add.finishTodo();
                 case 4:
-                    deleteTodo();
-                    break;
-                case 5:
-                    System.out.println("Goodbye!");
-                    return;
+                    add.deleteTodo();
                 default:
-                    System.out.println("Invalid choice!. Try again!");
-
-            }
-
-            for (Todo todo : todos) {
-                if (!todo.isDone()){
-                    remaining++;
-                }
-
-            }
-            if (remaining == 0) {
-                System.out.println("You have no more TODOs lefr!!!");
-            } else if (remaining == 1) {
-                System.out.println("You have 1 TODO lefr!!!");
-
-            }else {
-                System.out.println("You have " + remaining + " TODOs lefr!!!");
-            }
-            for (int i = 0; i < todos.size(); i++) {
-                Todo todo = todos.get(i);
-                System.out.println((i+1) + ". " + todo.title + (todo.done? "(Done)": ""));
-
+                    System.out.println("Please enter 1-5");
             }
         }
+        try{
+            readAndWrite.writeToFile();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
 
+        }
+        private static void printFirstScreen(){
+            System.out.println("Welcome!!!\n");
+            int todosLeft = todos.stream()
+                    .filter(todo -> !todo.isDone())
+                    .mapToInt(todo -> 1)
+                    .sum();
 
+        }
     }
 
-
-
-
-
-}
